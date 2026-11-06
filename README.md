@@ -19,7 +19,7 @@ The system reads a driving video frame-by-frame, immediately cropping to the hor
 
 | Red Temporal Profile | Yellow Temporal Profile |
 | :---: | :---: |
-| ![Red Temporal Profile](<passing (13)_RT.jpg>) | ![Yellow Temporal Profile](<passing (13)_YT.jpg>) |
+| ![Red Temporal Profile](<passing (13)_RT.png>) | ![Yellow Temporal Profile](<passing (13)_YT.png>) |
 
 > *Moving vehicles are traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*
 
