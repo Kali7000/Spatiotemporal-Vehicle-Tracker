@@ -5,25 +5,35 @@ This project is a custom computer vision pipeline built from scratch in Python (
 
 Instead of relying on black-box machine learning models, this pipeline mathematically processes raw video feeds into **Spatiotemporal Motion Profiles**, isolating the temporal lifespan and trajectory of active vehicles. It utilizes custom RGB linear transformations, multi-scale image pyramids, Laplacian edge-detection convolutions, and Sobel gradient-directed line tracking.
 
-## Pipeline Walkthrough
+---
+
+## Pipeline Walkthrough: Processing "passing (13)"
 
 ### Phase 1: Spatiotemporal Image Generation
 The system reads a driving video frame-by-frame, immediately cropping to the horizon region of interest to eliminate sky and vehicle hood glare.
 1. **Color Isolation:** Linear transformations `(R - 0.5G - 0.5B)` and `(0.5R + 0.5G - B)` are applied with zero-clipping to mathematically isolate intense red and yellow lights while erasing neutral white headlights and reflections.
 2. **Temporal Compression:** Vertical max-pooling compresses the isolated frame data into a single 1D scan line.
-3. **Matrix Stacking:** The 1D lines are stacked continuously over time. The resulting 2D matrix (`RT` for Red, `YT` for Yellow) represents physical space on the X-axis and time flowing upward on the Y-axis. Moving vehicles appear as continuous solid or dashed lines.
+3. **Matrix Stacking:** The 1D lines are stacked continuously over time. The resulting 2D matrix (`RT` for Red, `YT` for Yellow) represents physical space on the X-axis and time flowing upward on the Y-axis. 
 
-**[INSERT Phase 1 Output Image: `RT.png` and `YT.png`]**
-> *Caption: Moving red/yellow vehicles traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*
+**Raw Temporal Profiles:**
+* ![Red Temporal Profile](passing (13)_RT.jpg)[cite: 5]
+* ![Yellow Temporal Profile](passing (13)_YT.jpg)[cite: 10]
+> *Moving vehicles are traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*[cite: 5, 10]
 
 ### Phase 2: Sizing for Depth & Laplacian Filtering
 Under perspective projection, close vehicles appear large and distant vehicles appear small.
-1. **Multi-Scale Processing:** The temporal matrix is geometrically scaled horizontally (e.g., 259px and 518px widths) to compress close-up and mid-range vehicle lights into uniform 2-to-3-pixel targets without distorting the temporal Y-axis.
+1. **Multi-Scale Processing:** The temporal matrix is geometrically scaled horizontally (to 259px and 518px widths) to compress close-up and mid-range vehicle lights into uniform 2-to-3-pixel targets without distorting the temporal Y-axis.
 2. **Edge Convolution:** A custom 1D horizontal Laplacian kernel `[-2, -1, 6, -1, -2]` slides across every temporal row. 
 3. **Thresholding:** Applied at `DELTA = 125`, the filter mathematically highlights localized bright peaks while actively erasing broad, weak-yellow structural noise (e.g., painted lane lines, autumn foliage, yellow vehicle bodies).
 
-**[INSERT Phase 2 Output Image: `RLT2.png` and `YLT2.png`]**
-> *Caption: The Laplacian filtered output (`RLT`). Structural noise is completely suppressed, leaving only crisp, mathematically isolated 2-to-3-pixel traces of actual signal lights.*
+**259px Width (Close Vehicles):**
+* ![Red Laplacian Trace - 259px](passing (13)_RLT2.png)[cite: 3]
+* ![Yellow Laplacian Trace - 259px](passing (13)_YLT2.png)[cite: 8]
+
+**518px Width (Mid/Far Vehicles):**
+* ![Red Laplacian Trace - 518px](passing (13)_RLT5.png)[cite: 4]
+* ![Yellow Laplacian Trace - 518px](passing (13)_YLT5.png)[cite: 9]
+> *Structural noise is completely suppressed, leaving only crisp, mathematically isolated 2-to-3-pixel traces of actual signal lights.*[cite: 3, 4, 8, 9]
 
 ### Phase 3: Sobel Gradient Direction & Temporal Tracking
 To confirm a light trace belongs to a physical, continuously moving vehicle and not a temporary camera glitch, a temporal length tracker validates object lifespans.
@@ -32,8 +42,14 @@ To confirm a light trace belongs to a physical, continuously moving vehicle and 
 3. **Template Matching:** A 7-pixel localized template of the peak is checked against the predicted location in the prior frame utilizing Sum of Squared Differences (SSD).
 4. **Length Scoring:** If a match is found, the physical lifespan of the trace is incremented. Background noise is successfully bypassed by purging any track that fails to survive for fewer than 5 consecutive frames.
 
-**[INSERT Phase 3 Output Image: `RLEN2.png` and `YLEN2.png`]**
-> *Caption: The final length tracking matrix (`RLEN`). Brightness correlates to temporal track length, proving continuous physical existence and filtering out single-frame artifacts.*
+**259px Width (Close Vehicles):**
+* ![Red Length Tracker - 259px](passing (13)_RLEN2.png)[cite: 1]
+* ![Yellow Length Tracker - 259px](passing (13)_YLEN2.png)[cite: 6]
+
+**518px Width (Mid/Far Vehicles):**
+* ![Red Length Tracker - 518px](passing (13)_RLEN5.png)[cite: 2]
+* ![Yellow Length Tracker - 518px](passing (13)_YLEN5.png)[cite: 7]
+> *The final length tracking matrices. Brightness correlates to temporal track length, proving continuous physical existence and completely filtering out isolated artifacts.*[cite: 1, 2, 6, 7]
 
 ## Technologies Used
 * **Python 3.x**
