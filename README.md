@@ -16,11 +16,12 @@ The system reads a driving video frame-by-frame, immediately cropping to the hor
 3. **Matrix Stacking:** The 1D lines are stacked continuously over time. The resulting 2D matrix (`RT` for Red, `YT` for Yellow) represents physical space on the X-axis and time flowing upward on the Y-axis. 
 
 **Raw Temporal Profiles:**
-![alt text](<passing (13)_RT.png>)
-* ![Red Temporal Profile](passing (13)_RT.jpg)[cite: 5]
-![alt text](<passing (13)_YT.png>)
-* ![Yellow Temporal Profile](passing (13)_YT.jpg)[cite: 10]
-> *Moving vehicles are traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*[cite: 5, 10]
+
+| Red Temporal Profile | Yellow Temporal Profile |
+| :---: | :---: |
+| ![Red Temporal Profile](<passing (13)_RT.jpg>) | ![Yellow Temporal Profile](<passing (13)_YT.jpg>) |
+
+> *Moving vehicles are traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*
 
 ### Phase 2: Sizing for Depth & Laplacian Filtering
 Under perspective projection, close vehicles appear large and distant vehicles appear small.
@@ -29,17 +30,18 @@ Under perspective projection, close vehicles appear large and distant vehicles a
 3. **Thresholding:** Applied at `DELTA = 125`, the filter mathematically highlights localized bright peaks while actively erasing broad, weak-yellow structural noise (e.g., painted lane lines, autumn foliage, yellow vehicle bodies).
 
 **259px Width (Close Vehicles):**
-![alt text](<passing (13)_RLT2.png>)
-* ![Red Laplacian Trace - 259px](passing (13)_RLT2.png)[cite: 3]
-![alt text](<passing (13)_YLT2.png>)
-* ![Yellow Laplacian Trace - 259px](passing (13)_YLT2.png)[cite: 8]
+
+| Red Laplacian Trace | Yellow Laplacian Trace |
+| :---: | :---: |
+| ![Red Laplacian Trace - 259px](<passing (13)_RLT2.png>) | ![Yellow Laplacian Trace - 259px](<passing (13)_YLT2.png>) |
 
 **518px Width (Mid/Far Vehicles):**
-![alt text](<passing (13)_RLT5.png>)
-* ![Red Laplacian Trace - 518px](passing (13)_RLT5.png)[cite: 4]
-![alt text](<passing (13)_YLT5.png>)
-* ![Yellow Laplacian Trace - 518px](passing (13)_YLT5.png)[cite: 9]
-> *Structural noise is completely suppressed, leaving only crisp, mathematically isolated 2-to-3-pixel traces of actual signal lights.*[cite: 3, 4, 8, 9]
+
+| Red Laplacian Trace | Yellow Laplacian Trace |
+| :---: | :---: |
+| ![Red Laplacian Trace - 518px](<passing (13)_RLT5.png>) | ![Yellow Laplacian Trace - 518px](<passing (13)_YLT5.png>) |
+
+> *Structural noise is completely suppressed, leaving only crisp, mathematically isolated 2-to-3-pixel traces of actual signal lights.*
 
 ### Phase 3: Sobel Gradient Direction & Temporal Tracking
 To confirm a light trace belongs to a physical, continuously moving vehicle and not a temporary camera glitch, a temporal length tracker validates object lifespans.
@@ -49,17 +51,18 @@ To confirm a light trace belongs to a physical, continuously moving vehicle and 
 4. **Length Scoring:** If a match is found, the physical lifespan of the trace is incremented. Background noise is successfully bypassed by purging any track that fails to survive for fewer than 5 consecutive frames.
 
 **259px Width (Close Vehicles):**
-![alt text](<passing (13)_RLEN2.png>)
-* ![Red Length Tracker - 259px](passing (13)_RLEN2.png)[cite: 1]
-![alt text](<passing (13)_YLEN2.png>)
-* ![Yellow Length Tracker - 259px](passing (13)_YLEN2.png)[cite: 6]
+
+| Red Length Tracker | Yellow Length Tracker |
+| :---: | :---: |
+| ![Red Length Tracker - 259px](<passing (13)_RLEN2.png>) | ![Yellow Length Tracker - 259px](<passing (13)_YLEN2.png>) |
 
 **518px Width (Mid/Far Vehicles):**
-![alt text](<passing (13)_RLEN5.png>)
-* ![Red Length Tracker - 518px](passing (13)_RLEN5.png)[cite: 2]
-![alt text](<passing (13)_YLEN5.png>)
-* ![Yellow Length Tracker - 518px](passing (13)_YLEN5.png)[cite: 7]
-> *The final length tracking matrices. Brightness correlates to temporal track length, proving continuous physical existence and completely filtering out isolated artifacts.*[cite: 1, 2, 6, 7]
+
+| Red Length Tracker | Yellow Length Tracker |
+| :---: | :---: |
+| ![Red Length Tracker - 518px](<passing (13)_RLEN5.png>) | ![Yellow Length Tracker - 518px](<passing (13)_YLEN5.png>) |
+
+> *The final length tracking matrices. Brightness correlates to temporal track length, proving continuous physical existence and completely filtering out isolated artifacts.*
 
 ## Technologies Used
 * **Python 3.x**
