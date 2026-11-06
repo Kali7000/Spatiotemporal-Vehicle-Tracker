@@ -13,7 +13,7 @@ The system reads a driving video frame-by-frame, immediately cropping to the hor
 2. **Temporal Compression:** Vertical max-pooling compresses the isolated frame data into a single 1D scan line.
 3. **Matrix Stacking:** The 1D lines are stacked continuously over time. The resulting 2D matrix (`RT` for Red, `YT` for Yellow) represents physical space on the X-axis and time flowing upward on the Y-axis. Moving vehicles appear as continuous solid or dashed lines.
 
-**[INSERT Phase 1 Output Image: `RT.png` and `YT.png`]**
+![alt text](<passing (13)_YT.png>) ![alt text](<passing (13)_RT.png>)
 > *Caption: Moving red/yellow vehicles traced over time. A solid continuous line represents steady taillights, while vertical dashed lines indicate blinking turn signals.*
 
 ### Phase 2: Sizing for Depth & Laplacian Filtering
@@ -22,7 +22,7 @@ Under perspective projection, close vehicles appear large and distant vehicles a
 2. **Edge Convolution:** A custom 1D horizontal Laplacian kernel `[-2, -1, 6, -1, -2]` slides across every temporal row. 
 3. **Thresholding:** Applied at `DELTA = 125`, the filter mathematically highlights localized bright peaks while actively erasing broad, weak-yellow structural noise (e.g., painted lane lines, autumn foliage, yellow vehicle bodies).
 
-**[INSERT Phase 2 Output Image: `RLT2.png` and `YLT2.png`]**
+![alt text](<passing_changeline (1)_YLT2.png>) ![alt text](<passing_changeline (1)_RLT2.png>)
 > *Caption: The Laplacian filtered output (`RLT`). Structural noise is completely suppressed, leaving only crisp, mathematically isolated 2-to-3-pixel traces of actual signal lights.*
 
 ### Phase 3: Sobel Gradient Direction & Temporal Tracking
@@ -32,7 +32,7 @@ To confirm a light trace belongs to a physical, continuously moving vehicle and 
 3. **Template Matching:** A 7-pixel localized template of the peak is checked against the predicted location in the prior frame utilizing Sum of Squared Differences (SSD).
 4. **Length Scoring:** If a match is found, the physical lifespan of the trace is incremented. Background noise is successfully bypassed by purging any track that fails to survive for fewer than 5 consecutive frames.
 
-**[INSERT Phase 3 Output Image: `RLEN2.png` and `YLEN2.png`]**
+![alt text](<passing (13)_YLEN2.png>) ![alt text](<passing (13)_RLEN2.png>)
 > *Caption: The final length tracking matrix (`RLEN`). Brightness correlates to temporal track length, proving continuous physical existence and filtering out single-frame artifacts.*
 
 ## Technologies Used
